@@ -1,0 +1,222 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Minimal public VPC + EC2 instance that serves the local index.html file via nginx.
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t3.micro
+    AllowedValues:
+      - t3.micro
+      - t3.small
+      - t3.medium
+      - t4g.micro
+      - t4g.small
+      - t4g.medium
+    Description: EC2 instance type used for the web server.
+
+  Identifier:
+    Type: String
+    Default: sa-tech-scenario-2-cl
+    Description: Identifier for the stack.
+
+  KeyPairName:
+    Type: String
+    Default: ""
+    Description: Optional existing EC2 KeyPair for SSH access. Leave blank to disable SSH key association.
+
+  AllowedCidr:
+    Type: String
+    Default: 0.0.0.0/0
+    Description: CIDR block that can reach the web server over HTTP/HTTPS/SSH.
+
+  AmiIdParameter:
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64
+    Description: SSM parameter that resolves to the latest AL2023 AMI for the region.
+
+  VpcCidr:
+    Type: String
+    Default: 10.42.0.0/24
+    Description: CIDR range for the dedicated VPC.
+
+  PublicSubnetCidr:
+    Type: String
+    Default: 10.42.0.0/25
+    Description: CIDR range for the public subnet.
+
+Conditions:
+  HasKeyPair: !Not [!Equals [!Ref KeyPairName, ""]]
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Identifier
+          Value: !Ref Identifier
+        - Key: Name
+          Value: !Sub "${Identifier}-vpc"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Identifier
+          Value: !Ref Identifier
+        - Key: Name
+          Value: !Sub "${Identifier}-igw"
+
+  VpcGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PublicSubnetCidr
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Identifier
+          Value: !Ref Identifier
+        - Key: Name
+          Value: !Sub "${Identifier}-public"
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Identifier
+          Value: !Ref Identifier
+        - Key: Name
+          Value: !Sub "${Identifier}-rt"
+
+  DefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VpcGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP/HTTPS/SSH in and all egress out.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref AllowedCidr
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !Ref AllowedCidr
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref AllowedCidr
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Identifier
+          Value: !Ref Identifier
+        - Key: Name
+          Value: !Sub "${Identifier}-web-sg"
+
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Path: /
+      Tags:
+        - Key: Identifier
+          Value: !Ref Identifier
+        - Key: Name
+          Value: !Sub "${Identifier}-instance-role"
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref InstanceRole
+
+  WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AmiIdParameter
+      InstanceType: !Ref InstanceType
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !Ref WebSecurityGroup
+      IamInstanceProfile: !Ref InstanceProfile
+      KeyName: !If [HasKeyPair, !Ref KeyPairName, !Ref "AWS::NoValue"]
+      Tags:
+        - Key: Identifier
+          Value: !Ref Identifier
+        - Key: Name
+          Value: !Sub "${Identifier}-web"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -euo pipefail
+          dnf update -y
+          dnf install -y nginx
+          cat <<'EOF' >/usr/share/nginx/html/index.html
+          <!DOCTYPE html>
+          <html lang="en" style="font-family: monospace; font-size: x-large; background-color: #282A36; color: #F8F8F2;">
+
+          <head>
+            <title>AWS CloudFormation</title>
+            <meta charset="utf-8">
+            <link rel="icon"
+              href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
+
+          </head>
+
+          <body style="width: 600px; margin: 0 auto; ">
+            <h1 style="color: #50FA7B;">$ AWS CloudFormation</h1>
+            <img style="border: #6272A4; border-style: solid; corner-shape: squircle; border-radius: 17.544%;"
+              src="https://cataas.com/cat?width=597&height=597"></img>
+            <p>Meowdy partner!<br>
+              Welcome to this pawsome webpage.</p>
+          </body>
+
+          </html>
+          EOF
+          systemctl enable nginx
+          systemctl restart nginx
+
+Outputs:
+  WebsiteURL:
+    Description: Public URL of the one-pager.
+    Value: !Sub "http://${WebServer.PublicIp}"
+
+  InstancePublicIp:
+    Description: Convenience output with the public IP of the EC2 instance.
+    Value: !GetAtt WebServer.PublicIp
+
