@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "identifier": {
+      "value": "sa-tech-scenario-2-arm"
+    },
+    "vmSize": {
+      "value": "Standard_D2alds_v6"
+    },
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "sshPublicKey": {
+      "value": "ssh-rsa AAAAB3Nz...replace-with-real-key user@example"
+    },
+    "allowedCidr": {
+      "value": "0.0.0.0/0"
+    },
+    "vnetAddressPrefix": {
+      "value": "10.42.0.0/24"
+    },
+    "subnetPrefix": {
+      "value": "10.42.0.0/25"
+    },
+    "cloudInitBase64": {
+      "value": "IyEvYmluL2Jhc2gKc2V0IC1ldW8gcGlwZWZhaWwKYXB0LWdldCB1cGRhdGUgLXkKYXB0LWdldCBpbnN0YWxsIC15IG5naW54CmNhdCA8PCdFT0YnID4vdmFyL3d3dy9odG1sL2luZGV4Lmh0bWwKPCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIiBzdHlsZT0iZm9udC1mYW1pbHk6IG1vbm9zcGFjZTsgZm9udC1zaXplOiB4LWxhcmdlOyBiYWNrZ3JvdW5kLWNvbG9yOiAjMjgyQTM2OyBjb2xvcjogI0Y4RjhGMjsiPgo8aGVhZD4KICA8dGl0bGU+QXp1cmUgQVJNPC90aXRsZT4KICA8bWV0YSBjaGFyc2V0PSJ1dGYtOCI+CiAgPGxpbmsgcmVsPSJpY29uIgogICAgaHJlZj0iZGF0YTppbWFnZS9zdmcreG1sLDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCc+PHRleHQgeT0nLjllbScgZm9udC1zaXplPSc5MCc+8J+QvjwvdGV4dD48L3N2Zz4iIC8+CjwvaGVhZD4KPGJvZHkgc3R5bGU9IndpZHRoOiA2MDBweDsgbWFyZ2luOiAwIGF1dG87ICI+CiAgPGgxIHN0eWxlPSJjb2xvcjogIzUwRkE3QjsiPiQgQXp1cmUgQVJNPC9oMT4KICA8aW1nIHN0eWxlPSJib3JkZXI6ICM2MjcyQTQ7IGJvcmRlci1zdHlsZTogc29saWQ7IGNvcm5lci1zaGFwZTogc3F1aXJjbGU7IGJvcmRlci1yYWRpdXM6IDE3LjU0NCU7IgogICAgc3JjPSJodHRwczovL2NhdGFhcy5jb20vY2F0P3dpZHRoPTU5NyZoZWlnaHQ9NTk3Ij48L2ltZz4KICA8cD5NZW93ZHkgcGFydG5lciE8YnI+CiAgICBXZWxjb21lIHRvIHRoaXMgcGF3c29tZSB3ZWJwYWdlLjwvcD4KPC9ib2R5Pgo8L2h0bWw+CkVPRgpzeXN0ZW1jdGwgZW5hYmxlIG5naW54CnN5c3RlbWN0bCByZXN0YXJ0IG5naW54Cg=="
+    }
+  }
+}
