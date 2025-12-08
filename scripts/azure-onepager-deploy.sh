@@ -40,5 +40,4 @@ echo "Deployment outputs:"
 az deployment group show \
     --name "${AZ_DEPLOYMENT}" \
     --resource-group "${AZ_RG}" \
-    --query "properties.outputs" \
-    --output table
+    --query "properties.outputs"
