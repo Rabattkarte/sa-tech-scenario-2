@@ -34,5 +34,4 @@ aws cloudformation describe-stacks \
     --region "${REGION}" \
     --stack-name "${STACK_NAME}" \
     --query "Stacks[0].Outputs" \
-    --output table \
     --no-cli-pager
