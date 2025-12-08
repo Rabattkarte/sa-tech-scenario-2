@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-STACK_NAME="${STACK_NAME:-sa-tech-scenario-2-cl}"
+STACK_NAME="${STACK_NAME:-sa-tech-scenario-2-cf}"
 IDENTIFIER="${IDENTIFIER:-$STACK_NAME}"
 TEMPLATE_PATH="${TEMPLATE_PATH:-$(dirname "$(dirname "$0")")/aws-cloudformation-onepager/ec2-onepager.yml}"
 REGION="${AWS_REGION:-eu-west-1}"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-STACK_NAME="${STACK_NAME:-sa-tech-scenario-2-cl}"
+STACK_NAME="${STACK_NAME:-sa-tech-scenario-2-cf}"
 REGION="${AWS_REGION:-eu-west-1}"
 
 echo "Deleting CloudFormation stack '${STACK_NAME}' in region '${REGION}'"

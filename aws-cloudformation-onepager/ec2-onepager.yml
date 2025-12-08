@@ -17,7 +17,7 @@ Parameters:
 
   Identifier:
     Type: String
-    Default: sa-tech-scenario-2-cl
+    Default: sa-tech-scenario-2-cf
     Description: Identifier for the stack.
 
   KeyPairName:

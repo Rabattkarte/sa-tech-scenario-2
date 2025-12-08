@@ -18,7 +18,7 @@ This directory contains the CloudFormation template and helper scripts that spin
 
 ```bash
 export AWS_REGION=eu-west-1
-export STACK_NAME=sa-tech-scenario-2-cl
+export STACK_NAME=sa-tech-scenario-2-cf
 # Optional overrides:
 # export ALLOWED_CIDR=203.0.113.0/24
 
