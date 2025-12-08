@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+dnf update -y
+dnf install -y nginx
+cat <<'EOF' >/usr/share/nginx/html/index.html
+${index_html}
+EOF
+systemctl enable nginx
+systemctl restart nginx
