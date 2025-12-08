@@ -1,0 +1,10 @@
+import "tfplan/v2" as tfplan
+
+# Restrict Azure deployments to a curated set of regions.
+allowed_azure_regions = ["northeurope", "westeurope", "centralus"]
+
+azure_region = (tfplan.variables contains "azure_location") ? tfplan.variables["azure_location"].value : ""
+
+main = rule {
+    azure_region == "" or azure_region in allowed_azure_regions
+}
