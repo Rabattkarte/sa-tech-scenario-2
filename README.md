@@ -32,6 +32,10 @@ Original Azure ARM template for the same one-pager application.
 
 Deployment and teardown scripts for CloudFormation and ARM templates. These scripts represent the "old way" of managing infrastructure - custom bash scripts wrapping cloud-native CLIs. With HCP Terraform, these scripts become obsolete; all deployment logic is in the Terraform configuration.
 
+**Migration Tools:**
+
+- `azure-onepager-aztfexport.sh` - Exports existing Azure resources (created via ARM templates) to Terraform HCL configuration using `aztfexport`. This demonstrates how to migrate ARM-managed infrastructure to Terraform.
+
 ### 📁 [`modules`](modules)
 
 Reusable Terraform modules that replace CloudFormation and ARM templates.
@@ -63,3 +67,5 @@ HCP Terraform workspace configuration demonstrating multi-cloud deployment. This
 ### 📁 [`hcp-query`](hcp-query)
 
 Examples using `terraform query` (and `terraform import` to some extend) to discover existing cloud resources. This demonstrates how one can discover and potentially import existing CloudFormation and ARM-managed resources into Terraform state.
+
+**Related:** The `azure-onepager-aztfexport.sh` script in the [`scripts`](scripts) directory provides an automated way to export entire Azure resource groups to Terraform configuration, complementing the manual import process shown here.
