@@ -10,7 +10,7 @@ CLOUD_INIT_PATH="${CLOUD_INIT_PATH:-$(dirname "$(dirname "$0")")/azure-arm-onepa
 AZ_SSH_KEY_PATH="${AZ_SSH_KEY_PATH:-$HOME/.ssh/id_rsa.pub}"
 
 echo "Ensuring resource group '${AZ_RG}' exists in ${AZ_REGION}"
-az group create --name "${AZ_RG}" --location "${AZ_REGION}" >/dev/null
+az group create --name "${AZ_RG}" --location "${AZ_REGION}"
 
 if [[ ! -f "${AZ_SSH_KEY_PATH}" ]]; then
     echo "SSH public key not found at ${AZ_SSH_KEY_PATH}" >&2
