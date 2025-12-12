@@ -14,14 +14,6 @@ az group show --name "${AZ_RG}" >/dev/null || {
 echo "Exporting resources from '${AZ_RG}' to '${OUTPUT_DIR}'..."
 
 # Export resources from the specified Azure resource group to HCL using aztfexport
-#
-# Options:
-#   --non-interactive       Run without interactive prompts.
-#   --hcl-only              Export only HCL files, no .tfstate or provider config.
-#   --generate-import-block Generate import blocks for the exported resources.
-#   --parallelism           Number of parallel workers to use for resource export.
-#   --output-dir            Directory to write the exported files ("${OUTPUT_DIR}").
-#   <resource-group>        Name of the Azure resource group to export from ("${AZ_RG}").
 aztfexport resource-group \
     --overwrite \
     --non-interactive \
